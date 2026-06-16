@@ -1,0 +1,16 @@
+GROUP,PACKAGE,CLASS,INSTRUCTION_MISSED,INSTRUCTION_COVERED,BRANCH_MISSED,BRANCH_COVERED,LINE_MISSED,LINE_COVERED,COMPLEXITY_MISSED,COMPLEXITY_COVERED,METHOD_MISSED,METHOD_COVERED
+user-management,com.example.task3.service,UserService,8,405,3,19,2,98,3,24,0,16
+user-management,com.example.task3.config,GlobalExceptionHandler,144,0,2,0,27,0,9,0,8,0
+user-management,com.example.task3.entity,User.UserBuilder,0,70,0,0,0,11,0,11,0,11
+user-management,com.example.task3.entity,User,35,89,4,0,13,28,7,18,5,18
+user-management,com.example.task3.entity,UserRole,0,21,0,0,0,4,0,1,0,1
+user-management,com.example.task3.exception,UserNotFoundException,0,9,0,0,0,4,0,2,0,2
+user-management,com.example.task3.exception,DuplicateResourceException,0,4,0,0,0,2,0,1,0,1
+user-management,com.example.task3.controller,UserController,107,0,0,0,28,0,10,0,10,0
+user-management,com.example.task3,UserManagementApplication,18,0,0,0,6,0,3,0,3,0
+user-management,com.example.task3.dto,CreateUserRequest.Builder,0,42,0,0,0,7,0,7,0,7
+user-management,com.example.task3.dto,UpdateUserRequest.Builder,5,37,0,0,1,6,1,6,1,6
+user-management,com.example.task3.dto,UserResponse.Builder,0,70,0,0,0,11,0,11,0,11
+user-management,com.example.task3.dto,CreateUserRequest,23,37,0,0,7,13,6,7,6,7
+user-management,com.example.task3.dto,UserResponse,45,55,0,0,13,19,12,9,12,9
+user-management,com.example.task3.dto,UpdateUserRequest,23,37,0,0,7,13,6,7,6,7

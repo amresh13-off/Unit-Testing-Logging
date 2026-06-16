@@ -1,0 +1,12 @@
+C:\Users\gamre\Documents\JAVA Intern\Task-3\src\main\java\com\example\task3\controller\UserController.java
+C:\Users\gamre\Documents\JAVA Intern\Task-3\src\main\java\com\example\task3\dto\UpdateUserRequest.java
+C:\Users\gamre\Documents\JAVA Intern\Task-3\src\main\java\com\example\task3\exception\UserNotFoundException.java
+C:\Users\gamre\Documents\JAVA Intern\Task-3\src\main\java\com\example\task3\dto\UserResponse.java
+C:\Users\gamre\Documents\JAVA Intern\Task-3\src\main\java\com\example\task3\service\UserService.java
+C:\Users\gamre\Documents\JAVA Intern\Task-3\src\main\java\com\example\task3\config\GlobalExceptionHandler.java
+C:\Users\gamre\Documents\JAVA Intern\Task-3\src\main\java\com\example\task3\entity\UserRole.java
+C:\Users\gamre\Documents\JAVA Intern\Task-3\src\main\java\com\example\task3\UserManagementApplication.java
+C:\Users\gamre\Documents\JAVA Intern\Task-3\src\main\java\com\example\task3\dto\CreateUserRequest.java
+C:\Users\gamre\Documents\JAVA Intern\Task-3\src\main\java\com\example\task3\repository\UserRepository.java
+C:\Users\gamre\Documents\JAVA Intern\Task-3\src\main\java\com\example\task3\exception\DuplicateResourceException.java
+C:\Users\gamre\Documents\JAVA Intern\Task-3\src\main\java\com\example\task3\entity\User.java

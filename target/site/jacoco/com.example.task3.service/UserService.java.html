@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>UserService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">user-management</a> &gt; <a href="index.source.html" class="el_package">com.example.task3.service</a> &gt; <span class="el_source">UserService.java</span></div><h1>UserService.java</h1><pre class="source lang-java linenums">package com.example.task3.service;
+
+import com.example.task3.dto.CreateUserRequest;
+import com.example.task3.dto.UpdateUserRequest;
+import com.example.task3.dto.UserResponse;
+import com.example.task3.entity.User;
+import com.example.task3.entity.UserRole;
+import com.example.task3.exception.DuplicateResourceException;
+import com.example.task3.exception.UserNotFoundException;
+import com.example.task3.repository.UserRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+
+@Service
+public class UserService {
+
+<span class="fc" id="L21">    private static final Logger log = LoggerFactory.getLogger(UserService.class);</span>
+
+    private final UserRepository userRepository;
+
+<span class="fc" id="L25">    public UserService(UserRepository userRepository) {</span>
+<span class="fc" id="L26">        this.userRepository = userRepository;</span>
+<span class="fc" id="L27">    }</span>
+
+    @Transactional
+    public UserResponse createUser(CreateUserRequest request) {
+<span class="fc" id="L31">        log.debug(&quot;Attempting to create user with username: {}&quot;, request.getUsername());</span>
+
+<span class="fc bfc" id="L33" title="All 2 branches covered.">        if (userRepository.existsByEmail(request.getEmail())) {</span>
+<span class="fc" id="L34">            log.warn(&quot;Duplicate email attempted: {}&quot;, request.getEmail());</span>
+<span class="fc" id="L35">            throw new DuplicateResourceException(&quot;Email already exists: &quot; + request.getEmail());</span>
+        }
+
+<span class="fc bfc" id="L38" title="All 2 branches covered.">        if (userRepository.existsByUsername(request.getUsername())) {</span>
+<span class="fc" id="L39">            log.warn(&quot;Duplicate username attempted: {}&quot;, request.getUsername());</span>
+<span class="fc" id="L40">            throw new DuplicateResourceException(&quot;Username already exists: &quot; + request.getUsername());</span>
+        }
+
+<span class="fc" id="L43">        User user = User.builder()</span>
+<span class="fc" id="L44">                .username(request.getUsername())</span>
+<span class="fc" id="L45">                .email(request.getEmail())</span>
+<span class="fc" id="L46">                .firstName(request.getFirstName())</span>
+<span class="fc" id="L47">                .lastName(request.getLastName())</span>
+<span class="fc bfc" id="L48" title="All 2 branches covered.">                .role(request.getRole() != null ? request.getRole() : UserRole.USER)</span>
+<span class="fc" id="L49">                .active(true)</span>
+<span class="fc" id="L50">                .build();</span>
+
+<span class="fc" id="L52">        User saved = userRepository.save(user);</span>
+<span class="fc" id="L53">        log.info(&quot;User created successfully: id={}, username={}&quot;, saved.getId(), saved.getUsername());</span>
+<span class="fc" id="L54">        return toResponse(saved);</span>
+    }
+
+    @Transactional(readOnly = true)
+    public UserResponse getUserById(Long id) {
+<span class="fc" id="L59">        log.debug(&quot;Fetching user by id: {}&quot;, id);</span>
+<span class="fc" id="L60">        User user = userRepository.findById(id)</span>
+<span class="fc" id="L61">                .orElseThrow(() -&gt; {</span>
+<span class="fc" id="L62">                    log.warn(&quot;User not found with id: {}&quot;, id);</span>
+<span class="fc" id="L63">                    return new UserNotFoundException(id);</span>
+                });
+<span class="fc" id="L65">        log.debug(&quot;User found: id={}, username={}&quot;, user.getId(), user.getUsername());</span>
+<span class="fc" id="L66">        return toResponse(user);</span>
+    }
+
+    @Transactional(readOnly = true)
+    public List&lt;UserResponse&gt; getAllUsers() {
+<span class="fc" id="L71">        log.debug(&quot;Fetching all users&quot;);</span>
+<span class="fc" id="L72">        List&lt;User&gt; users = userRepository.findAll();</span>
+<span class="fc" id="L73">        log.info(&quot;Retrieved {} users from database&quot;, users.size());</span>
+<span class="fc" id="L74">        return users.stream()</span>
+<span class="fc" id="L75">                .map(this::toResponse)</span>
+<span class="fc" id="L76">                .toList();</span>
+    }
+
+    @Transactional
+    public UserResponse updateUser(Long id, UpdateUserRequest request) {
+<span class="fc" id="L81">        log.debug(&quot;Updating user with id: {}&quot;, id);</span>
+
+<span class="fc" id="L83">        User user = userRepository.findById(id)</span>
+<span class="fc" id="L84">                .orElseThrow(() -&gt; {</span>
+<span class="fc" id="L85">                    log.warn(&quot;User not found for update with id: {}&quot;, id);</span>
+<span class="fc" id="L86">                    return new UserNotFoundException(id);</span>
+                });
+
+<span class="fc bfc" id="L89" title="All 2 branches covered.">        if (request.getFirstName() != null) {</span>
+<span class="fc" id="L90">            user.setFirstName(request.getFirstName());</span>
+        }
+<span class="fc bfc" id="L92" title="All 2 branches covered.">        if (request.getLastName() != null) {</span>
+<span class="fc" id="L93">            user.setLastName(request.getLastName());</span>
+        }
+<span class="fc bfc" id="L95" title="All 2 branches covered.">        if (request.getEmail() != null) {</span>
+<span class="pc bpc" id="L96" title="1 of 2 branches missed.">            if (!request.getEmail().equals(user.getEmail()) &amp;&amp;</span>
+<span class="pc bpc" id="L97" title="1 of 2 branches missed.">                    userRepository.existsByEmail(request.getEmail())) {</span>
+<span class="fc" id="L98">                log.warn(&quot;Duplicate email during update: {}&quot;, request.getEmail());</span>
+<span class="fc" id="L99">                throw new DuplicateResourceException(&quot;Email already exists: &quot; + request.getEmail());</span>
+            }
+<span class="nc" id="L101">            user.setEmail(request.getEmail());</span>
+        }
+<span class="fc bfc" id="L103" title="All 2 branches covered.">        if (request.getRole() != null) {</span>
+<span class="fc" id="L104">            user.setRole(request.getRole());</span>
+        }
+<span class="pc bpc" id="L106" title="1 of 2 branches missed.">        if (request.getActive() != null) {</span>
+<span class="nc" id="L107">            user.setActive(request.getActive());</span>
+        }
+
+<span class="fc" id="L110">        User saved = userRepository.save(user);</span>
+<span class="fc" id="L111">        log.info(&quot;User updated successfully: id={}&quot;, saved.getId());</span>
+<span class="fc" id="L112">        return toResponse(saved);</span>
+    }
+
+    @Transactional
+    public void deleteUser(Long id) {
+<span class="fc" id="L117">        log.debug(&quot;Attempting to delete user with id: {}&quot;, id);</span>
+
+<span class="fc bfc" id="L119" title="All 2 branches covered.">        if (!userRepository.existsById(id)) {</span>
+<span class="fc" id="L120">            log.warn(&quot;User not found for deletion with id: {}&quot;, id);</span>
+<span class="fc" id="L121">            throw new UserNotFoundException(id);</span>
+        }
+
+<span class="fc" id="L124">        userRepository.deleteById(id);</span>
+<span class="fc" id="L125">        log.info(&quot;User deleted successfully: id={}&quot;, id);</span>
+<span class="fc" id="L126">    }</span>
+
+    @Transactional(readOnly = true)
+    public UserResponse findByEmail(String email) {
+<span class="fc" id="L130">        log.debug(&quot;Fetching user by email: {}&quot;, email);</span>
+
+<span class="fc" id="L132">        User user = userRepository.findByEmail(email)</span>
+<span class="fc" id="L133">                .orElseThrow(() -&gt; {</span>
+<span class="fc" id="L134">                    log.warn(&quot;User not found with email: {}&quot;, email);</span>
+<span class="fc" id="L135">                    return new UserNotFoundException(&quot;User not found with email: &quot; + email);</span>
+                });
+
+<span class="fc" id="L138">        log.debug(&quot;User found by email: {}&quot;, email);</span>
+<span class="fc" id="L139">        return toResponse(user);</span>
+    }
+
+    @Transactional
+    public UserResponse activateUser(Long id) {
+<span class="fc" id="L144">        log.debug(&quot;Activating user with id: {}&quot;, id);</span>
+
+<span class="fc" id="L146">        User user = userRepository.findById(id)</span>
+<span class="fc" id="L147">                .orElseThrow(() -&gt; {</span>
+<span class="fc" id="L148">                    log.warn(&quot;User not found for activation with id: {}&quot;, id);</span>
+<span class="fc" id="L149">                    return new UserNotFoundException(id);</span>
+                });
+
+<span class="fc" id="L152">        user.setActive(true);</span>
+<span class="fc" id="L153">        User saved = userRepository.save(user);</span>
+<span class="fc" id="L154">        log.info(&quot;User activated: id={}&quot;, saved.getId());</span>
+<span class="fc" id="L155">        return toResponse(saved);</span>
+    }
+
+    @Transactional
+    public UserResponse deactivateUser(Long id) {
+<span class="fc" id="L160">        log.debug(&quot;Deactivating user with id: {}&quot;, id);</span>
+
+<span class="fc" id="L162">        User user = userRepository.findById(id)</span>
+<span class="fc" id="L163">                .orElseThrow(() -&gt; {</span>
+<span class="fc" id="L164">                    log.warn(&quot;User not found for deactivation with id: {}&quot;, id);</span>
+<span class="fc" id="L165">                    return new UserNotFoundException(id);</span>
+                });
+
+<span class="fc" id="L168">        user.setActive(false);</span>
+<span class="fc" id="L169">        User saved = userRepository.save(user);</span>
+<span class="fc" id="L170">        log.info(&quot;User deactivated: id={}&quot;, saved.getId());</span>
+<span class="fc" id="L171">        return toResponse(saved);</span>
+    }
+
+    private UserResponse toResponse(User user) {
+<span class="fc" id="L175">        return UserResponse.builder()</span>
+<span class="fc" id="L176">                .id(user.getId())</span>
+<span class="fc" id="L177">                .username(user.getUsername())</span>
+<span class="fc" id="L178">                .email(user.getEmail())</span>
+<span class="fc" id="L179">                .firstName(user.getFirstName())</span>
+<span class="fc" id="L180">                .lastName(user.getLastName())</span>
+<span class="fc" id="L181">                .role(user.getRole())</span>
+<span class="fc" id="L182">                .active(user.getActive())</span>
+<span class="fc" id="L183">                .createdAt(user.getCreatedAt())</span>
+<span class="fc" id="L184">                .updatedAt(user.getUpdatedAt())</span>
+<span class="fc" id="L185">                .build();</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.13.202504020838</span></div></body></html>

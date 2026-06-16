@@ -1,0 +1,8 @@
+com\example\task3\service\UserServiceTest$FindByEmail.class
+com\example\task3\service\UserServiceTest$UpdateUser.class
+com\example\task3\service\UserServiceTest$CreateUser.class
+com\example\task3\service\UserServiceTest.class
+com\example\task3\service\UserServiceTest$Activation.class
+com\example\task3\service\UserServiceTest$GetAllUsers.class
+com\example\task3\service\UserServiceTest$GetUserById.class
+com\example\task3\service\UserServiceTest$DeleteUser.class
