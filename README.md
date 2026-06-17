@@ -1,3 +1,6 @@
+## 🏗️ Project Architecture
+
+```mermaid
 flowchart TD
     Client["Client (HTTP / curl / browser)"] --> Controller["Controller Layer<br>UserController.java<br>REST API @ /api/users<br>POST GET PUT DELETE PATCH"]
 
@@ -17,9 +20,7 @@ flowchart TD
 
     subgraph LoggingSystem["LOGGING (SLF4J + Logback)"]
         L1["Console Appender<br>Level: DEBUG (app) / INFO (framework)"]
-
         L2["File Appender<br>logs/application.log<br>Level: INFO+<br>Rolling: 10MB / 10 files"]
-
         L3["Error File Appender<br>logs/error.log<br>Level: ERROR only"]
     end
 
@@ -38,3 +39,4 @@ flowchart TD
     end
 
     Repository -.->|mocked| Test
+```
